@@ -33,6 +33,9 @@
     "integration-e2e": {
       "tags": [],
       "implicitDependencies": ["integration"]
+    },
+    "ngx-cva-test-suite": {
+      "tags": ["type:lib"]
     }
   }
 }

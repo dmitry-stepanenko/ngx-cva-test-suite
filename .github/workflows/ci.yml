@@ -1,0 +1,30 @@
+name: on-pull-request
+
+on:
+    push:
+        branches:
+            - 'master'
+
+jobs:
+    build:
+        name: Build and Test
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+            - name: Use Node 14.x
+              uses: actions/setup-node@v1
+              with:
+                  node-version: '14.x'
+            - name: Install dependencies
+              run: npm ci
+            - name: Check Formatting
+              run: npm run format:check
+            - name: Integration Test
+              run: npm run test
+            - name: Test Package
+              run: npm run test-package
+            - name: Build App
+              run: npm run build -- --prod
+            - name: Build Package
+              run: npm run build-package

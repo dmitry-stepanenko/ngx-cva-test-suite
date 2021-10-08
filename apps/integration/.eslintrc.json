@@ -4,16 +4,13 @@
   "overrides": [
     {
       "files": ["*.ts"],
-      "extends": [
-        "plugin:@nrwl/nx/angular",
-        "plugin:@angular-eslint/template/process-inline-templates"
-      ],
+      "extends": ["plugin:@nrwl/nx/angular", "plugin:@angular-eslint/template/process-inline-templates"],
       "rules": {
         "@angular-eslint/directive-selector": [
           "error",
           {
             "type": "attribute",
-            "prefix": "ngxCvaTestSuite",
+            "prefix": "lib",
             "style": "camelCase"
           }
         ],
@@ -21,7 +18,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "ngx-cva-test-suite",
+            "prefix": "lib",
             "style": "kebab-case"
           }
         ]

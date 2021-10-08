@@ -1,0 +1,16 @@
+<div class="con" #ratingContainer [class.disabled]="disabled || readonly">
+  <div class="outline" [style.width]="100 - fillPercent + '%'">
+    <span class="star">&#9734;</span>
+    <span class="star">&#9734;</span>
+    <span class="star">&#9734;</span>
+    <span class="star">&#9734;</span>
+    <span class="star">&#9734;</span>
+  </div>
+  <div class="fill nlf" [style.width]="fillPercent + '%'">
+    <span class="star">&#9733;</span>
+    <span class="star">&#9733;</span>
+    <span class="star">&#9733;</span>
+    <span class="star">&#9733;</span>
+    <span class="star">&#9733;</span>
+  </div>
+</div>

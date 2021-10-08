@@ -1,105 +1,192 @@
+# ngx-cva-test-suite
 
+## Standardise your custom UI form components with ControlValueAccessor Test Suite
 
-# NgxCvaTestSuite
+<a href="https://www.npmjs.com/ngx-cva-test-suite">
+    <img src="https://img.shields.io/npm/v/ngx-cva-test-suite.svg?logo=npm&logoColor=fff&label=NPM+package&color=limegreen" alt="NPM package" />
+</a>
 
-This project was generated using [Nx](https://nx.dev).
+`ngx-cva-test-suite` provides extensive set of test cases, ensuring your custom controls behave as intended.
 
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
+It provides various configurations, that allows even with the most non-standard components to be properly tested.
 
-🔎 **Smart, Extensible Build Framework**
+## Installation
 
-## Quick Start & Documentation
+```
+npm i ngx-cva-test-suite --save-dev
+```
 
-[Nx Documentation](https://nx.dev/angular)
+## Simple Usage
 
-[10-minute video showing all Nx features](https://nx.dev/getting-started/intro)
+See [config](#config) below for the details on each property.
 
-[Interactive Tutorial](https://nx.dev/tutorial/01-create-application)
+```typescript
+import { runValueAccessorTests } from `ngx-cva-test-suite`;
 
-## Adding capabilities to your workspace
+runValueAccessorTests({
+    component: ComboboxComponent,
+    testModuleMetadata: {
+        declarations: [ComboboxComponent],
+    },
+    supportsOnBlur: true,
+    getNativeControlSelector: 'input.combobox-input',
+    internalValueChangeSetter: (fixture, value) => {
+        fixture.componentInstance.setValue(value, true);
+    },
+    getComponentValue: (fixture) => fixture.componentInstance.value,
+});
+```
 
-Nx supports many plugins which add capabilities for developing different types of applications and different tools.
+## Config
 
-These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
+### interface CVATestConfig<T extends CVAComponentType, H = T>
 
-Below are our core plugins:
+#### testModuleMetadata: TestModuleMetadata
 
-- [Angular](https://angular.io)
-  - `ng add @nrwl/angular`
-- [React](https://reactjs.org)
-  - `ng add @nrwl/react`
-- Web (no framework frontends)
-  - `ng add @nrwl/web`
-- [Nest](https://nestjs.com)
-  - `ng add @nrwl/nest`
-- [Express](https://expressjs.com)
-  - `ng add @nrwl/express`
-- [Node](https://nodejs.org)
-  - `ng add @nrwl/node`
+All the metadata required for this test to run. Under the hood calls `TestBed.configureTestingModule` with provided config
 
-There are also many [community plugins](https://nx.dev/community) you could add.
+#### name?: string
 
-## Generate an application
+Is used in a root `describe` statement of the test suite.
 
-Run `ng g @nrwl/angular:app my-app` to generate an application.
+Should be the name of the component, that is being tested. By default will use the name of testing component.
 
-> You can use any of the plugins above to generate applications as well.
+#### hostTemplate?: HostTemplate<T, H>
 
-When using Nx, you can create multiple applications and libraries in the same workspace.
+Allows to define custom wrapper template for this set of tests. Is useful if CVA cannot be tested in complete isolation.
 
-## Generate a library
+See details [below](#interface-hosttemplatet-h)
 
-Run `ng g @nrwl/angular:lib my-lib` to generate a library.
+#### component: Type<T>
 
-> You can also use any of the plugins above to generate libraries as well.
+Component, that is being tested
 
-Libraries are shareable across libraries and applications. They can be imported from `@ngx-cva-test-suite/mylib`.
+#### getComponentValue: (fixture: ComponentFixture<H>) => any
 
-## Development server
+Function to get the value of a component in a runtime. Is used to ensure component applies provided value correctly.
+Set to `null` if you want to skip this check.
 
-Run `ng serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+Example usage:
 
-## Code scaffolding
+```typescript
+// supposed your component has "getValue()" method
+getComponentValue: (fixture) => fixture.componentInstance.getValue();
+```
 
-Run `ng g component my-component --project=my-app` to generate a new component.
+#### supportsOnBlur: boolean
 
-## Build
+This is related to the ability to track blur events in order to set `emitOn: 'blur'` when used in reactive form.
 
-Run `ng build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+If set to true, component will be tested to not call `onTouched` event when value changed.
+Instead of this, it will be expected to trigger this function
+by html blur event using native control (see `getNativeControlSelector`in this config).
 
-## Running unit tests
+#### getNativeControlSelector?: string
 
-Run `ng test my-app` to execute the unit tests via [Jest](https://jestjs.io).
+CSS selector for the element, that should dispatch `blur` event. Required and used only if `supportsOnBlur` is set to true.
+Provided selected will be used to programmatically dispatch `blur` event.
 
-Run `nx affected:test` to execute the unit tests affected by a change.
+Example:
 
-## Running end-to-end tests
+```html
+<input class="combobox-input" />
+```
 
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
+For the CVA with HTML as above the following should be provided:
 
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
+```typescript
+getNativeControlSelector: 'input.combobox-input';
+```
 
-## Understand your workspace
+#### internalValueChangeSetter: (fixture: ComponentFixture<H>, value: any) => void
 
-Run `nx dep-graph` to see a diagram of the dependencies of your projects.
+Tests the approach that is used to set value in the component, when the change is internal
+(e.g. by clicking on an option of the select or typing in the input field).
+When value is set, "onChange" (and "onTouched" depending on the "blur" behavior) methods are expected to be invoked
 
-## Further help
+Set to `null` if you want to skip this check.
 
-Visit the [Nx Documentation](https://nx.dev/angular) to learn more.
+Example:
+if in your component you have something like this in html
 
+```html
+<input (input)="onSearchChange($event.target.value) />
+```
 
+then provide here
 
+```typescript
+internalValueChangeSetter: (fixture, value) => {
+    fixture.componentInstance.onSearchChange(value);
+};
+```
 
+#### additionalSetup?: (fixture: ComponentFixture<H>, done: () => void) => void
 
+Gives an ability to add any additional logic for the setup process.
+It will be called before running each test.
 
-## ☁ Nx Cloud
+Make sure you are calling `done` callback after setup is finished.
 
-### Distributed Computation Caching & Distributed Task Execution
+#### customDelay?: number
 
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-cloud-card.png"></p>
+After setting the value, each test waits for the given amount of time before going further with checks. Defaults to 100ms
 
-Nx Cloud pairs with Nx in order to enable you to build and test code more rapidly, by up to 10 times. Even teams that are new to Nx can connect to Nx Cloud and start saving time instantly.
+#### getValues?: () => [any, any, any]
 
-Teams using Nx gain the advantage of building full-stack applications with their preferred framework alongside Nx’s advanced code generation and project dependency graph, plus a unified experience for both frontend and backend developers.
+Customizer for plain values. By default will use ['a', 'b', 'c']
 
-Visit [Nx Cloud](https://nx.app/) to learn more.
+This test suite applies up to 3 different values on the component. If strings are not supported in your component,
+replace it with whatever is needed. It's recommended to **NOT** use consecutive same values (like ~`[1, 1, 1]`~)
+
+Example:
+
+```
+getValues: () => [1, 2, 3]
+// or
+getValues: () => [true, false, true]
+```
+
+#### resetCustomValue?: { value: any }
+
+Component will be tested for correct behavior, when `FormControl`'s `reset()` method is called.
+After simulating this call, it will check if value of the component is reset internally.
+
+If your component is not supposed to work with `null` as a value, specify what you're expecting to have as a value internally
+
+#### disabledStateNotSupported?: boolean
+
+Set this to true, if component cannot be disabled.
+
+If set to true, `ControlValueAccessor.setDisabledState()` function will not be checked for existance and correct behavior.
+
+#### testRunnerType?: TestRunnerType
+
+Test suite will automatically detect whether it's Jest or Jasmine environment. If needed, this can be overriden
+
+### interface HostTemplate<T, H>
+
+#### hostComponent: Type<any>
+
+Wrapper, that hosts testing component. For example, to test `app-select-component` the following wrapper is used
+
+```typescript
+@Component({
+    selector: 'app-test-component-wrapper',
+    template: `
+        <app-select label="Label Value">
+            <app-select-item [value]="1" label="Opt 1"></app-select-item>
+            <app-select-item [value]="2" label="Opt 2"></app-select-item>
+            <app-select-item [value]="3" label="Opt 3"></app-select-item>
+        </app-select>
+    `,
+})
+class TestWrapperComponent {}
+```
+
+#### getTestingComponent: (fixture: ComponentFixture<H>) => T
+
+Getter for the actual component that is being tested
+
+Using the hostComponent above, the following function should be used:
+`(fixture) => fixture.debugElement.children[0].componentInstance;`

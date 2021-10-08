@@ -1,157 +1,192 @@
 {
-  "version": 1,
-  "projects": {
-    "integration": {
-      "projectType": "application",
-      "root": "apps/integration",
-      "sourceRoot": "apps/integration/src",
-      "prefix": "ngx-cva-test-suite",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:browser",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/apps/integration",
-            "index": "apps/integration/src/index.html",
-            "main": "apps/integration/src/main.ts",
-            "polyfills": "apps/integration/src/polyfills.ts",
-            "tsConfig": "apps/integration/tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              "apps/integration/src/favicon.ico",
-              "apps/integration/src/assets"
-            ],
-            "styles": ["apps/integration/src/styles.scss"],
-            "scripts": []
-          },
-          "configurations": {
-            "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+    "version": 1,
+    "projects": {
+        "integration": {
+            "projectType": "application",
+            "root": "apps/integration",
+            "sourceRoot": "apps/integration/src",
+            "prefix": "ngx-cva-test-suite",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-angular:browser",
+                    "outputs": ["{options.outputPath}"],
+                    "options": {
+                        "outputPath": "dist/apps/integration",
+                        "index": "apps/integration/src/index.html",
+                        "main": "apps/integration/src/main.ts",
+                        "polyfills": "apps/integration/src/polyfills.ts",
+                        "tsConfig": "apps/integration/tsconfig.app.json",
+                        "inlineStyleLanguage": "scss",
+                        "assets": ["apps/integration/src/favicon.ico", "apps/integration/src/assets"],
+                        "styles": ["apps/integration/src/styles.scss"],
+                        "scripts": []
+                    },
+                    "configurations": {
+                        "production": {
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "500kb",
+                                    "maximumError": "1mb"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "2kb",
+                                    "maximumError": "4kb"
+                                }
+                            ],
+                            "fileReplacements": [
+                                {
+                                    "replace": "apps/integration/src/environments/environment.ts",
+                                    "with": "apps/integration/src/environments/environment.prod.ts"
+                                }
+                            ],
+                            "outputHashing": "all"
+                        },
+                        "development": {
+                            "buildOptimizer": false,
+                            "optimization": false,
+                            "vendorChunk": true,
+                            "extractLicenses": false,
+                            "sourceMap": true,
+                            "namedChunks": true
+                        }
+                    },
+                    "defaultConfiguration": "production"
                 },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                "serve": {
+                    "builder": "@angular-devkit/build-angular:dev-server",
+                    "configurations": {
+                        "production": {
+                            "browserTarget": "integration:build:production"
+                        },
+                        "development": {
+                            "browserTarget": "integration:build:development"
+                        }
+                    },
+                    "defaultConfiguration": "development"
+                },
+                "extract-i18n": {
+                    "builder": "@angular-devkit/build-angular:extract-i18n",
+                    "options": {
+                        "browserTarget": "integration:build"
+                    }
+                },
+                "lint": {
+                    "builder": "@nrwl/linter:eslint",
+                    "options": {
+                        "lintFilePatterns": ["apps/integration/src/**/*.ts", "apps/integration/src/**/*.html"]
+                    }
+                },
+                "test": {
+                    "builder": "@nrwl/jest:jest",
+                    "outputs": ["coverage/apps/integration"],
+                    "options": {
+                        "jestConfig": "apps/integration/jest.config.js",
+                        "passWithNoTests": true
+                    }
                 }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "apps/integration/src/environments/environment.ts",
-                  "with": "apps/integration/src/environments/environment.prod.ts"
+            }
+        },
+        "integration-e2e": {
+            "root": "apps/integration-e2e",
+            "sourceRoot": "apps/integration-e2e/src",
+            "projectType": "application",
+            "architect": {
+                "e2e": {
+                    "builder": "@nrwl/cypress:cypress",
+                    "options": {
+                        "cypressConfig": "apps/integration-e2e/cypress.json",
+                        "devServerTarget": "integration:serve:development",
+                        "tsConfig": "apps/integration-e2e/tsconfig.json"
+                    },
+                    "configurations": {
+                        "production": {
+                            "devServerTarget": "integration:serve:production"
+                        }
+                    }
+                },
+                "lint": {
+                    "builder": "@nrwl/linter:eslint",
+                    "outputs": ["{options.outputFile}"],
+                    "options": {
+                        "lintFilePatterns": ["apps/integration-e2e/**/*.{js,ts}"]
+                    }
                 }
-              ],
-              "outputHashing": "all"
-            },
-            "development": {
-              "buildOptimizer": false,
-              "optimization": false,
-              "vendorChunk": true,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true
             }
-          },
-          "defaultConfiguration": "production"
         },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "configurations": {
-            "production": {
-              "browserTarget": "integration:build:production"
-            },
-            "development": {
-              "browserTarget": "integration:build:development"
+        "ngx-cva-test-suite": {
+            "projectType": "library",
+            "root": "libs/ngx-cva-test-suite",
+            "sourceRoot": "libs/ngx-cva-test-suite/src",
+            "prefix": "ngx-cva-test-suite",
+            "architect": {
+                "build": {
+                    "builder": "@nrwl/angular:package",
+                    "outputs": ["dist/libs/ngx-cva-test-suite"],
+                    "options": {
+                        "project": "libs/ngx-cva-test-suite/ng-package.json"
+                    },
+                    "configurations": {
+                        "production": {
+                            "tsConfig": "libs/ngx-cva-test-suite/tsconfig.lib.prod.json"
+                        },
+                        "development": {
+                            "tsConfig": "libs/ngx-cva-test-suite/tsconfig.lib.json"
+                        }
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "lint": {
+                    "builder": "@nrwl/linter:eslint",
+                    "options": {
+                        "lintFilePatterns": [
+                            "libs/ngx-cva-test-suite/src/**/*.ts",
+                            "libs/ngx-cva-test-suite/src/**/*.html"
+                        ]
+                    }
+                },
+                "test": {
+                    "builder": "@nrwl/jest:jest",
+                    "outputs": ["coverage/libs/ngx-cva-test-suite"],
+                    "options": {
+                        "jestConfig": "libs/ngx-cva-test-suite/jest.config.js",
+                        "passWithNoTests": true
+                    }
+                }
             }
-          },
-          "defaultConfiguration": "development"
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "integration:build"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "apps/integration/src/**/*.ts",
-              "apps/integration/src/**/*.html"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/integration"],
-          "options": {
-            "jestConfig": "apps/integration/jest.config.js",
-            "passWithNoTests": true
-          }
         }
-      }
     },
-    "integration-e2e": {
-      "root": "apps/integration-e2e",
-      "sourceRoot": "apps/integration-e2e/src",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@nrwl/cypress:cypress",
-          "options": {
-            "cypressConfig": "apps/integration-e2e/cypress.json",
-            "devServerTarget": "integration:serve:development",
-            "tsConfig": "apps/integration-e2e/tsconfig.json"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "integration:serve:production"
+    "cli": {
+        "defaultCollection": "@nrwl/angular",
+        "packageManager": "npm"
+    },
+    "schematics": {
+        "@nrwl/angular": {
+            "application": {
+                "linter": "eslint"
+            },
+            "library": {
+                "linter": "eslint"
+            },
+            "storybook-configuration": {
+                "linter": "eslint"
             }
-          }
         },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
-          "options": {
-            "lintFilePatterns": ["apps/integration-e2e/**/*.{js,ts}"]
-          }
+        "@nrwl/angular:application": {
+            "style": "scss",
+            "linter": "eslint",
+            "unitTestRunner": "jest",
+            "e2eTestRunner": "cypress"
+        },
+        "@nrwl/angular:library": {
+            "style": "scss",
+            "linter": "eslint",
+            "unitTestRunner": "jest"
+        },
+        "@nrwl/angular:component": {
+            "style": "scss"
         }
-      }
-    }
-  },
-  "cli": {
-    "defaultCollection": "@nrwl/angular",
-    "packageManager": "npm"
-  },
-  "schematics": {
-    "@nrwl/angular": {
-      "application": {
-        "linter": "eslint"
-      },
-      "library": {
-        "linter": "eslint"
-      },
-      "storybook-configuration": {
-        "linter": "eslint"
-      }
     },
-    "@nrwl/angular:application": {
-      "style": "scss",
-      "linter": "eslint",
-      "unitTestRunner": "jest",
-      "e2eTestRunner": "cypress"
-    },
-    "@nrwl/angular:library": {
-      "style": "scss",
-      "linter": "eslint",
-      "unitTestRunner": "jest"
-    },
-    "@nrwl/angular:component": {
-      "style": "scss"
-    }
-  },
-  "defaultProject": "integration"
+    "defaultProject": "integration"
 }

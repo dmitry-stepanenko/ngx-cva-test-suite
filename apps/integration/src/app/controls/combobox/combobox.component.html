@@ -1,0 +1,13 @@
+<input
+    #comboboxInput
+    class="combobox-input"
+    type="text"
+    [attr.list]="'inputOptions' + uniqueId"
+    autocomplete="off"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+/>
+
+<datalist [id]="'inputOptions' + uniqueId" *ngIf="options?.length">
+    <option *ngFor="let option of options">{{ option }}</option>
+</datalist>

@@ -1,0 +1,35 @@
+{
+    "name": "ngx-cva-test-suite",
+    "description": "Standardise your custom UI form components with ControlValueAccessor Test Suite",
+    "author": "Dmitriy Stepanenko",
+    "license": "MIT",
+    "version": "1.0.1",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dmitry-stepanenko/ngx-cva-test-suite"
+    },
+    "bugs": {
+        "url": "https://github.com/dmitry-stepanenko/ngx-cva-test-suite/issues/new"
+    },
+    "homepage": "https://github.com/dmitry-stepanenko/ngx-cva-test-suite#readme",
+    "keywords": [
+        "angular unit test",
+        "angular simplified tests",
+        "jasmine",
+        "jest",
+        "angular",
+        "angular tests",
+        "angular test services",
+        "angular testing CVA components",
+        "control value accessor tests",
+        "CVA tests",
+        "CVA"
+    ],
+    "peerDependencies": {
+        "@angular/common": "^12.2.0",
+        "@angular/core": "^12.2.0"
+    },
+    "dependencies": {
+        "tslib": "^2.3.0"
+    }
+}

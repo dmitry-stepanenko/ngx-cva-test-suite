@@ -13,8 +13,11 @@
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "strictPropertyInitialization": false,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "ngx-cva-test-suite": ["libs/ngx-cva-test-suite/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
