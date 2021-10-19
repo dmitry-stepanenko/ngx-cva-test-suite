@@ -57,14 +57,10 @@ export function runValueAccessorTests<T extends CVAComponentType, H = T>(config:
         beforeEach(() => {
             if (config.hostTemplate) {
                 fixture = TestBed.createComponent(config.hostTemplate.hostComponent);
-                fixture.detectChanges();
-                componentInstance = config.hostTemplate.getTestingComponent(fixture);
             } else {
                 // if there's no host template specified, component will be tested directly.
                 // in this case fixture will be based on actual component
                 fixture = TestBed.createComponent(config.component as any);
-                fixture.detectChanges();
-                componentInstance = fixture.componentInstance as any;
             }
         });
 
@@ -75,8 +71,15 @@ export function runValueAccessorTests<T extends CVAComponentType, H = T>(config:
         }
 
         beforeEach(() => {
+            // defining componentInstance after "additionalSetup",
+            // because "detectChanges()" should not be called before it
             fixture.detectChanges();
+            componentInstance = config.hostTemplate
+                ? config.hostTemplate.getTestingComponent(fixture)
+                : (fixture.componentInstance as any);
+        });
 
+        beforeEach(() => {
             onChangeSpy = testRunnerResolver.createSpy();
             onTouchedSpy = testRunnerResolver.createSpy();
 

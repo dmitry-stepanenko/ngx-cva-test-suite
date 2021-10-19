@@ -3,7 +3,7 @@
     "description": "Standardise your custom UI form components with ControlValueAccessor Test Suite",
     "author": "Dmitriy Stepanenko",
     "license": "MIT",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "repository": {
         "type": "git",
         "url": "https://github.com/dmitry-stepanenko/ngx-cva-test-suite"
