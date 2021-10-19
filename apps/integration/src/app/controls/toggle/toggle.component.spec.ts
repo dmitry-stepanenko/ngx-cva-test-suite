@@ -9,7 +9,7 @@ runValueAccessorTests({
         imports: [FormsModule],
     },
     supportsOnBlur: true,
-    getNativeControlSelector: 'input.toggle__input',
+    nativeControlSelector: 'input.toggle__input',
     internalValueChangeSetter: (fixture, value) => {
         fixture.componentInstance.setValue(value, true);
     },

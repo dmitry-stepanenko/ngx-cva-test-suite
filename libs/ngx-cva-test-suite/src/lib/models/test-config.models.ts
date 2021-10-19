@@ -37,7 +37,7 @@ export interface CVATestConfig<T extends CVAComponentType, H = T> {
      *
      * If set to true, component will be tested to not call `onTouched` event when value changed.
      * Instead of this, it will be expected to trigger this function
-     * by html blur event using native control (see `getNativeControlSelector`in this config).
+     * by html blur event using native control (see `nativeControlSelector`in this config).
      */
     supportsOnBlur: boolean;
     /**
@@ -51,10 +51,10 @@ export interface CVATestConfig<T extends CVAComponentType, H = T> {
      * For the CVA with HTML as above the following should be provided:
      *
      * ```typescript
-     * getNativeControlSelector: 'input.combobox-input'
+     * nativeControlSelector: 'input.combobox-input'
      * ```
      */
-    getNativeControlSelector?: string;
+    nativeControlSelector?: string;
     /**
      * Tests the approach that is used to set value in the component, when the change is internal
      * (e.g. by clicking on an option of the select or typing in the input field).

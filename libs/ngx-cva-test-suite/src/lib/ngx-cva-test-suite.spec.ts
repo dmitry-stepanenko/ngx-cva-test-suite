@@ -27,7 +27,7 @@ runValueAccessorTests<DefaultValueAccessor, DefaultCVAWrapperComponent>({
         getTestingComponent: (fixture) => fixture.componentInstance.defaultCtrl,
     },
     supportsOnBlur: true,
-    getNativeControlSelector: 'input[ngDefaultControl]',
+    nativeControlSelector: 'input[ngDefaultControl]',
     internalValueChangeSetter: null,
     getComponentValue: (fixture) => fixture.componentInstance.value,
     resetCustomValue: { value: '' },

@@ -22,7 +22,7 @@ import { TestRunnerResolver } from './utils/test-runner-resolver';
  *         declarations: [ComboboxComponent],
  *     },
  *     supportsOnBlur: true,
- *     getNativeControlSelector: 'input.combobox-input',
+ *     nativeControlSelector: 'input.combobox-input',
  *     internalValueChangeSetter: (fixture, value) => {
  *         fixture.componentInstance.setValue(value, true);
  *     },
@@ -207,8 +207,8 @@ export function runValueAccessorTests<T extends CVAComponentType, H = T>(config:
                 setupPlainValues();
                 let nativeControlDebugElement: DebugElement;
                 let nativeControl: EventTarget | undefined;
-                if (config.getNativeControlSelector) {
-                    nativeControlDebugElement = fixture.debugElement.query(By.css(config.getNativeControlSelector));
+                if (config.nativeControlSelector) {
+                    nativeControlDebugElement = fixture.debugElement.query(By.css(config.nativeControlSelector));
                     nativeControl = nativeControlDebugElement?.nativeElement;
                 }
                 expect(nativeControl).toBeDefined();
@@ -226,8 +226,8 @@ function getValues(): [string, string, string] {
 }
 
 function validateConfig(config: CVATestConfig<any>) {
-    if (config.supportsOnBlur && typeof config.getNativeControlSelector !== 'string') {
-        throw new Error('Expected "getNativeControlSelector" to be defined, if "supportsOnBlur" is set to true.');
+    if (config.supportsOnBlur && typeof config.nativeControlSelector !== 'string') {
+        throw new Error('Expected "nativeControlSelector" to be defined, if "supportsOnBlur" is set to true.');
     }
 }
 

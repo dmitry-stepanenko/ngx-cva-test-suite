@@ -7,7 +7,7 @@ runValueAccessorTests({
         declarations: [ComboboxComponent],
     },
     supportsOnBlur: true,
-    getNativeControlSelector: 'input.combobox-input',
+    nativeControlSelector: 'input.combobox-input',
     internalValueChangeSetter: (fixture, value) => {
         fixture.componentInstance.setValue(value, true);
     },

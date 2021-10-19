@@ -29,7 +29,7 @@ runValueAccessorTests({
         declarations: [ComboboxComponent],
     },
     supportsOnBlur: true,
-    getNativeControlSelector: 'input.combobox-input',
+    nativeControlSelector: 'input.combobox-input',
     internalValueChangeSetter: (fixture, value) => {
         fixture.componentInstance.setValue(value, true);
     },
@@ -79,9 +79,9 @@ This is related to the ability to track blur events in order to set `emitOn: 'bl
 
 If set to true, component will be tested to not call `onTouched` event when value changed.
 Instead of this, it will be expected to trigger this function
-by html blur event using native control (see `getNativeControlSelector`in this config).
+by html blur event using native control (see `nativeControlSelector`in this config).
 
-#### getNativeControlSelector?: string
+#### nativeControlSelector?: string
 
 CSS selector for the element, that should dispatch `blur` event. Required and used only if `supportsOnBlur` is set to true.
 Provided selected will be used to programmatically dispatch `blur` event.
@@ -95,7 +95,7 @@ Example:
 For the CVA with HTML as above the following should be provided:
 
 ```typescript
-getNativeControlSelector: 'input.combobox-input';
+nativeControlSelector: 'input.combobox-input';
 ```
 
 #### internalValueChangeSetter: (fixture: ComponentFixture<H>, value: any) => void

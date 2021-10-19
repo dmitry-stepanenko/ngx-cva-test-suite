@@ -15,5 +15,11 @@ npm run build-package
 echo "Running \"npm pack\".."
 cd dist/libs/ngx-cva-test-suite/ 
 npm pack
-echo "Publishing.."
-npm publish
+
+if [ $# -ne 0 ] && [ $1 = '--publish' ]
+then
+    echo "Publishing.."
+    npm publish
+else
+    echo 'Stopped before publishing'
+fi
