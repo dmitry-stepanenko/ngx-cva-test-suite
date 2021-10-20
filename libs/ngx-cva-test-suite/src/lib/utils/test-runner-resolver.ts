@@ -9,10 +9,13 @@ export class TestRunnerResolver {
         this.testRunnerType = forceType ?? this.getTestRunnerType();
     }
 
-    createSpy(): CompatibleSpy {
+    /**
+     * @param name name of the spy. Will be used only in jasmine
+     */
+    createSpy(name: string): CompatibleSpy {
         switch (this.testRunnerType) {
             case TestRunnerType.Jasmine:
-                return jasmine.createSpy();
+                return jasmine.createSpy(name);
 
             case TestRunnerType.Jest:
                 return jest.fn();
@@ -44,6 +47,7 @@ export class TestRunnerResolver {
             (<any>expect(spyFn)).toHaveBeenNthCalledWith(nthCall, ...params);
         } else {
             const nthCallArgs = spyFn.calls.argsFor(nthCall - 1);
+            expect(spyFn).toHaveBeenCalledTimes(nthCall);
             expect(nthCallArgs).toEqual(params);
         }
     }

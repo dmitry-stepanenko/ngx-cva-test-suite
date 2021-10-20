@@ -80,8 +80,8 @@ export function runValueAccessorTests<T extends CVAComponentType, H = T>(config:
         });
 
         beforeEach(() => {
-            onChangeSpy = testRunnerResolver.createSpy();
-            onTouchedSpy = testRunnerResolver.createSpy();
+            onChangeSpy = testRunnerResolver.createSpy('onChangeSpy');
+            onTouchedSpy = testRunnerResolver.createSpy('onTouchedSpy');
 
             registerOnChangeSpy = testRunnerResolver.spyOn(componentInstance, 'registerOnChange');
             registerOnTouchedSpy = testRunnerResolver.spyOn(componentInstance, 'registerOnTouched');
@@ -96,9 +96,9 @@ export function runValueAccessorTests<T extends CVAComponentType, H = T>(config:
             fixture.detectChanges();
         }
 
-        function expectComponentValueToBe(expected: any): void {
+        function expectComponentValueToEqual(expected: any): void {
             if (typeof config.getComponentValue === 'function') {
-                expect(config.getComponentValue(fixture)).toBe(expected);
+                expect(config.getComponentValue(fixture)).toEqual(expected);
             }
         }
 
@@ -121,7 +121,7 @@ export function runValueAccessorTests<T extends CVAComponentType, H = T>(config:
             expect(onChangeSpy).toHaveBeenCalledTimes(0);
             expect(onTouchedSpy).toHaveBeenCalledTimes(0);
             expect(setDisabledStateSpy).toHaveBeenCalledTimes(0);
-            expectComponentValueToBe(getValuesFn()[0]);
+            expectComponentValueToEqual(getValuesFn()[0]);
         });
 
         it('value set externally', fakeAsync(() => {
@@ -134,14 +134,14 @@ export function runValueAccessorTests<T extends CVAComponentType, H = T>(config:
             expect(onTouchedSpy).toHaveBeenCalledTimes(0);
             componentInstance.writeValue(getValuesFn()[1]);
             tick(config.customDelay ?? 100);
-            expectComponentValueToBe(getValuesFn()[1]);
+            expectComponentValueToEqual(getValuesFn()[1]);
             expect(writeValueSpy).toHaveBeenCalledTimes(2);
             testRunnerResolver.expectToHaveBeenNthCalledWith(writeValueSpy, 2, [getValuesFn()[1]]);
             expect(onChangeSpy).toHaveBeenCalledTimes(0);
             expect(onTouchedSpy).toHaveBeenCalledTimes(0);
             componentInstance.writeValue(getValuesFn()[2]);
             tick(config.customDelay ?? 100);
-            expectComponentValueToBe(getValuesFn()[2]);
+            expectComponentValueToEqual(getValuesFn()[2]);
             expect(writeValueSpy).toHaveBeenCalledTimes(3);
             testRunnerResolver.expectToHaveBeenNthCalledWith(writeValueSpy, 3, [getValuesFn()[2]]);
             expect(onChangeSpy).toHaveBeenCalledTimes(0);
@@ -153,14 +153,14 @@ export function runValueAccessorTests<T extends CVAComponentType, H = T>(config:
             expect(writeValueSpy).toHaveBeenCalledTimes(1);
             expect(onChangeSpy).toHaveBeenCalledTimes(0);
             expect(onTouchedSpy).toHaveBeenCalledTimes(0);
-            expectComponentValueToBe(getValuesFn()[0]);
+            expectComponentValueToEqual(getValuesFn()[0]);
             componentInstance.writeValue(null);
             tick(config.customDelay ?? 100);
             expect(writeValueSpy).toHaveBeenCalledTimes(2);
             testRunnerResolver.expectToHaveBeenNthCalledWith(writeValueSpy, 2, [null]);
             expect(onChangeSpy).toHaveBeenCalledTimes(0);
             expect(onTouchedSpy).toHaveBeenCalledTimes(0);
-            expectComponentValueToBe(config.resetCustomValue ? config.resetCustomValue.value : null);
+            expectComponentValueToEqual(config.resetCustomValue ? config.resetCustomValue.value : null);
         }));
 
         if (!config.disabledStateNotSupported) {
@@ -170,7 +170,7 @@ export function runValueAccessorTests<T extends CVAComponentType, H = T>(config:
                 componentInstance.setDisabledState(true);
                 tick(config.customDelay ?? 100);
                 componentInstance.writeValue(getValuesFn()[1]);
-                expectComponentValueToBe(getValuesFn()[1]);
+                expectComponentValueToEqual(getValuesFn()[1]);
                 testRunnerResolver.expectToHaveBeenNthCalledWith(writeValueSpy, 2, [getValuesFn()[1]]);
                 expect(setDisabledStateSpy).toHaveBeenCalledTimes(1);
                 expect(onChangeSpy).toHaveBeenCalledTimes(0);
@@ -180,7 +180,7 @@ export function runValueAccessorTests<T extends CVAComponentType, H = T>(config:
                 tick(config.customDelay ?? 100);
                 componentInstance.writeValue(getValuesFn()[2]);
                 tick(config.customDelay ?? 100);
-                expectComponentValueToBe(getValuesFn()[2]);
+                expectComponentValueToEqual(getValuesFn()[2]);
                 testRunnerResolver.expectToHaveBeenNthCalledWith(writeValueSpy, 3, [getValuesFn()[2]]);
                 expect(setDisabledStateSpy).toHaveBeenCalledTimes(2);
                 expect(onChangeSpy).toHaveBeenCalledTimes(0);
@@ -199,7 +199,7 @@ export function runValueAccessorTests<T extends CVAComponentType, H = T>(config:
                 expect(onTouchedSpy).toHaveBeenCalledTimes(0);
                 config.internalValueChangeSetter!(fixture, getValuesFn()[1]);
                 tick(config.customDelay ?? 100);
-                expectComponentValueToBe(getValuesFn()[1]);
+                expectComponentValueToEqual(getValuesFn()[1]);
                 testRunnerResolver.expectToHaveBeenNthCalledWith(onChangeSpy, 1, [getValuesFn()[1]]);
                 expect(onTouchedSpy).toHaveBeenCalledTimes(config.supportsOnBlur ? 0 : 1);
             }));

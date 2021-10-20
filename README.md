@@ -8,7 +8,7 @@
 
 `ngx-cva-test-suite` provides extensive set of test cases, ensuring your custom controls behave as intended.
 
-It provides various configurations, that allows even with the most non-standard components to be properly tested.
+It provides various configurations, that allows even the most non-standard components to be properly tested.
 
 ## Installation
 
