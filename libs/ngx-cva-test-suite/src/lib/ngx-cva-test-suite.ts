@@ -206,7 +206,7 @@ export function runValueAccessorTests<T extends CVAComponentType, H = T>(config:
         }
 
         if (config.supportsOnBlur) {
-            it('should emit onTouched event, when "blur" event has been dispatched', () => {
+            it('should emit onTouched event, when "blur" event has been dispatched', fakeAsync(() => {
                 setupPlainValues();
                 let nativeControlDebugElement: DebugElement;
                 let nativeControl: EventTarget | undefined;
@@ -216,10 +216,16 @@ export function runValueAccessorTests<T extends CVAComponentType, H = T>(config:
                 }
                 expect(nativeControl).toBeDefined();
                 expect(onTouchedSpy).toHaveBeenCalledTimes(0);
+                const focusEvent = new Event('focus');
+                nativeControl?.dispatchEvent(focusEvent);
+                expect(onTouchedSpy).toHaveBeenCalledTimes(0);
+
+                tick(config.customDelay ?? 100);
+
                 const blurEvent = new Event('blur');
                 nativeControl?.dispatchEvent(blurEvent);
                 expect(onTouchedSpy).toHaveBeenCalledTimes(1);
-            });
+            }));
         }
     });
 }
