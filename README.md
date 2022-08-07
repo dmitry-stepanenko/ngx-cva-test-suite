@@ -6,9 +6,18 @@
     <img src="https://img.shields.io/npm/v/ngx-cva-test-suite.svg?logo=npm&logoColor=fff&label=NPM+package&color=limegreen" alt="NPM package" />
 </a>
 
-`ngx-cva-test-suite` provides extensive set of test cases, ensuring your custom controls behave as intended.
+`ngx-cva-test-suite` provides an extensive set of test cases, ensuring your custom controls behave as intended. Package is designed and tested to work properly with both **Jest** and **Jasmine** test runners.
 
 It provides various configurations, that allows even the most non-standard components to be properly tested.
+
+Among the main features:
+
+-   ensures the correct amount of calls for the `onChange` function _(incorrect usage may result in extra emissions of `valueChanges` of formControl)_
+-   ensures correct triggering of `onTouched` function _(is needed for `touched` state of the control and `updateOn: 'blur'` [strategy](https://angular.io/api/forms/AbstractControl#updateOn) to function properly)_
+-   ensures that no extra emissions are present when control is disabled
+-   checks for control to be resettable using `AbstractControl.reset()`
+
+In the repository you can also [find few simple CVA components](apps/integration/src/app/controls), that are configured properly along with `ngx-cva-test-suite` setup for them.
 
 ## Installation
 
@@ -34,6 +43,53 @@ runValueAccessorTests({
         fixture.componentInstance.setValue(value, true);
     },
     getComponentValue: (fixture) => fixture.componentInstance.value,
+});
+```
+
+## Using host template
+
+This type of configuration might become handy, if your CVA component relies on projected content or specific layout to function correctly. A good example of such would be a select component, that gets it's options as projected content.
+
+```typescript
+import { runValueAccessorTests } from 'ngx-cva-test-suite';
+import { Component, ViewChild } from '@angular/core';
+
+import { CustomCheckboxControlValueAccessor } from './support/standard-value-accessors-directives';
+
+@Component({
+    template: `
+        <app-select>
+            <app-select-option [value]="1">Opt 1</app-select-option>
+            <app-select-option [value]="2">Opt 2</app-select-option>
+            <app-select-option [value]="3">Opt 3</app-select-option>
+        </app-select>
+    `,
+})
+export class SelectWrapperComponent {
+    @ViewChild(AppSelectComponent) ctrl: AppSelectComponent;
+}
+
+runValueAccessorTests<AppSelectComponent, SelectWrapperComponent>({
+    // <= if host template is used, it should be marked explicitly as a type
+    component: AppSelectComponent, // <= using actual AppSelectComponent as a test target
+    testModuleMetadata: {
+        declarations: [SelectWrapperComponent],
+        imports: [AppSelectModule], // <= importing the module for app-select
+    },
+    hostTemplate: {
+        // specify that "AppSelectComponent" should not be tested directly
+        hostComponent: SelectWrapperComponent,
+        // specify the way to access "AppSelectComponent" from the host template
+        getTestingComponent: (fixture) => fixture.componentInstance.ctrl,
+    },
+    supportsOnBlur: false,
+    internalValueChangeSetter: (fixture, value) => {
+        // "setValue" is a function that is being called
+        // when user selects any "app-select-option"
+        fixture.componentInstance.ctrl.setValue(value, true);
+    },
+    getComponentValue: (fixture) => fixture.componentInstance.ctrl.value,
+    getValues: () => [1, 2, 3], // <= setting the same values as select options in host template
 });
 ```
 
@@ -164,6 +220,14 @@ If set to true, `ControlValueAccessor.setDisabledState()` function will not be c
 
 Test suite will automatically detect whether it's Jest or Jasmine environment. If needed, this can be overriden
 
+#### excludeSteps?: CVATestSteps[];
+
+List of steps to be excluded from execution. Cannot be specified along with `includeSteps`
+
+#### includeSteps?: CVATestSteps[];
+
+List of steps to be included in execution. Cannot be specified along with `excludeSteps`
+
 ### interface HostTemplate<T, H>
 
 #### hostComponent: Type<any>
@@ -174,14 +238,16 @@ Wrapper, that hosts testing component. For example, to test `app-select-componen
 @Component({
     selector: 'app-test-component-wrapper',
     template: `
-        <app-select label="Label Value">
-            <app-select-item [value]="1" label="Opt 1"></app-select-item>
-            <app-select-item [value]="2" label="Opt 2"></app-select-item>
-            <app-select-item [value]="3" label="Opt 3"></app-select-item>
+        <app-select label="Label Value" #ctrl>
+            <app-select-option [value]="1" label="Opt 1"></app-select-option>
+            <app-select-option [value]="2" label="Opt 2"></app-select-option>
+            <app-select-option [value]="3" label="Opt 3"></app-select-option>
         </app-select>
     `,
 })
-class TestWrapperComponent {}
+class TestWrapperComponent {
+    @ViewChild('ctrl') ctrl: AppSelectComponent;
+}
 ```
 
 #### getTestingComponent: (fixture: ComponentFixture<H>) => T
@@ -189,4 +255,4 @@ class TestWrapperComponent {}
 Getter for the actual component that is being tested
 
 Using the hostComponent above, the following function should be used:
-`(fixture) => fixture.debugElement.children[0].componentInstance;`
+`(fixture) => fixture.componentInstance.ctrl;`

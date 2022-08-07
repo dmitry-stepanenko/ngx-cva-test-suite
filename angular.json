@@ -85,6 +85,15 @@
                         "jestConfig": "apps/integration/jest.config.js",
                         "passWithNoTests": true
                     }
+                },
+                "test-karma": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "main": "apps/integration/src/karma-test.ts",
+                        "tsConfig": "apps/integration/tsconfig.spec-karma.json",
+                        "karmaConfig": "apps/integration/karma.conf.js",
+                        "polyfills": "apps/integration/src/polyfills.ts"
+                    }
                 }
             }
         },

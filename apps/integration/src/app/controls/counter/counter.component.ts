@@ -21,8 +21,8 @@ export class CounterControlComponent implements ControlValueAccessor {
     disabled = false;
     value = 0;
 
-    private onTouched: () => void;
-    private onChange: (value: number) => void;
+    protected onTouched: () => void;
+    protected onChange: (value: number) => void;
 
     up() {
         this.setValue(this.value + 1, true);
@@ -48,7 +48,7 @@ export class CounterControlComponent implements ControlValueAccessor {
         this.setValue(value, false);
     }
 
-    private setValue(value: number, emitEvent: boolean) {
+    protected setValue(value: number, emitEvent: boolean) {
         const parsed = parseInt(value as any);
         this.value = isNaN(parsed) ? 0 : parsed;
         if (emitEvent && this.onChange) {

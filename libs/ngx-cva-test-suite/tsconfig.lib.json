@@ -1,14 +1,14 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
-    "target": "es2015",
-    "declaration": true,
-    "declarationMap": true,
-    "inlineSources": true,
-    "types": ["jasmine"],
-    "lib": ["dom", "es2018"]
-  },
-  "exclude": [],
-  "include": ["**/*.ts"]
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "outDir": "../../dist/out-tsc",
+        "target": "es2015",
+        "declaration": true,
+        "declarationMap": true,
+        "inlineSources": true,
+        "types": ["jasmine"],
+        "lib": ["dom", "es2018"]
+    },
+    "exclude": [],
+    "include": ["**/*.ts"]
 }

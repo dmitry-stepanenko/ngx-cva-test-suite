@@ -1,44 +1,44 @@
 :host {
-  --filled-star-color: gold;
-  --outline-star-color: grey;
-  --disabled-opacity: 0.6;
+    --filled-star-color: gold;
+    --outline-star-color: grey;
+    --disabled-opacity: 0.6;
 }
 
 .con {
-  position: relative;
-  display: inline-flex;
+    position: relative;
+    display: inline-flex;
 
-  &.disabled {
-    opacity: var(--disabled-opacity);
-    filter: grayscale(20%);
-  }
+    &.disabled {
+        opacity: var(--disabled-opacity);
+        filter: grayscale(20%);
+    }
 
-  &::before {
-    $gutter: 0.4em;
+    &::before {
+        $gutter: 0.4em;
 
-    content: '';
-    position: absolute;
-    width: calc(100% + #{$gutter});
-    height: 100%;
-    left: $gutter * 0.5;
-    top: 0;
-  }
+        content: '';
+        position: absolute;
+        width: calc(100% + #{$gutter});
+        height: 100%;
+        left: $gutter * 0.5;
+        top: 0;
+    }
 }
 
 .outline {
-  color: var(--outline-star-color);
-  position: absolute;
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
-  right: 0;
-  top: 0;
-  display: flex;
-  flex-direction: row-reverse;
+    color: var(--outline-star-color);
+    position: absolute;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    right: 0;
+    top: 0;
+    display: flex;
+    flex-direction: row-reverse;
 }
 
 .fill {
-  color: var(--filled-star-color);
-  overflow: hidden;
-  display: flex;
+    color: var(--filled-star-color);
+    overflow: hidden;
+    display: flex;
 }
