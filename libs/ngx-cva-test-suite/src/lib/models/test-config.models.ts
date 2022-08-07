@@ -5,6 +5,16 @@ import { TestRunnerType } from './test-runner.models';
 
 export type CVAComponentType = Required<ControlValueAccessor>;
 
+export enum CVATestSteps {
+    MethodsAreDefined = 1,
+    InitializationIsDoneProperly,
+    ValueSetExternally,
+    ResetHandledProperly,
+    SettingDisabledState,
+    ValueChangedInternally,
+    OnBlurSupport,
+}
+
 export interface CVATestConfig<T extends CVAComponentType, H = T> {
     /** All the metadata required for this test to run. Under the hood calls `TestBed.configureTestingModule` with provided config */
     testModuleMetadata: TestModuleMetadata;
@@ -73,8 +83,8 @@ export interface CVATestConfig<T extends CVAComponentType, H = T> {
      *   fixture.componentInstance.onSearchChange(value);
      * }
      * ```
-     */
-    internalValueChangeSetter: ((fixture: ComponentFixture<H>, value: any) => void) | null;
+     */ // TODO: revisit this description
+    internalValueChangeSetter: ((fixture: ComponentFixture<H>, value: any) => void | Promise<void>) | null; // TODO: optional done
     /**
      * Gives an ability to add any additional logic for the setup process.
      * It will be called before running each test.
@@ -113,6 +123,10 @@ export interface CVATestConfig<T extends CVAComponentType, H = T> {
     disabledStateNotSupported?: boolean;
     /** Test suite will automatically detect whether it's Jest or Jasmine environment. If needed, this can be overriden */
     testRunnerType?: TestRunnerType;
+    /** List of steps to be excluded from execution. Cannot be specified along with `includeSteps` */
+    excludeSteps?: CVATestSteps[];
+    /** List of steps to be included in execution. Cannot be specified along with `excludeSteps`*/
+    includeSteps?: CVATestSteps[];
 }
 
 export interface HostTemplate<T, H> {

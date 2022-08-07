@@ -1,13 +1,12 @@
 import { DefaultValueAccessor, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { runValueAccessorTests } from './ngx-cva-test-suite';
+import { runValueAccessorTests } from 'ngx-cva-test-suite';
 
 import { Component, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
-    selector: 'lib-default-input-cva-wrapper',
     template: `<input type="text" ngDefaultControl #ctrl />`,
 })
-export class DefaultCVAWrapperComponent {
+export class CVAWrapperComponent {
     @ViewChild(DefaultValueAccessor) defaultCtrl: DefaultValueAccessor;
     @ViewChild('ctrl') readonly ctrl: ElementRef<HTMLInputElement>;
 
@@ -16,14 +15,14 @@ export class DefaultCVAWrapperComponent {
     }
 }
 
-runValueAccessorTests<DefaultValueAccessor, DefaultCVAWrapperComponent>({
+runValueAccessorTests<DefaultValueAccessor, CVAWrapperComponent>({
     component: DefaultValueAccessor,
     testModuleMetadata: {
-        declarations: [DefaultCVAWrapperComponent],
+        declarations: [CVAWrapperComponent],
         imports: [FormsModule, ReactiveFormsModule],
     },
     hostTemplate: {
-        hostComponent: DefaultCVAWrapperComponent,
+        hostComponent: CVAWrapperComponent,
         getTestingComponent: (fixture) => fixture.componentInstance.defaultCtrl,
     },
     supportsOnBlur: true,

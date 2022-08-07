@@ -10,6 +10,13 @@
 
 It provides various configurations, that allows even the most non-standard components to be properly tested.
 
+Among the main features:
+
+-   ensures correct amount of calls for `onChange` function _(incorrect usage may result in extra emissions of `valueChanges` of formControl)_
+-   ensures correct triggering of `onTouched` function _(is needed for `touched` state of the control and `updateOn: 'blur'` [strategy](https://angular.io/api/forms/AbstractControl#updateOn) to function properly)_
+-   ensures that no extra emissions are present when control is disabled
+-   checks for control to be resettable using `AbstractControl.reset()`
+
 ## Installation
 
 ```
@@ -34,6 +41,51 @@ runValueAccessorTests({
         fixture.componentInstance.setValue(value, true);
     },
     getComponentValue: (fixture) => fixture.componentInstance.value,
+});
+```
+
+## Using host template
+
+```typescript
+import { runValueAccessorTests } from 'ngx-cva-test-suite';
+import { Component, ViewChild } from '@angular/core';
+
+import { CustomCheckboxControlValueAccessor } from './support/standard-value-accessors-directives';
+
+@Component({
+    template: `
+        <app-select>
+            <app-select-option [value]="1">Opt 1</app-select-option>
+            <app-select-option [value]="2">Opt 2</app-select-option>
+            <app-select-option [value]="3">Opt 3</app-select-option>
+        </app-select>
+    `,
+})
+export class SelectWrapperComponent {
+    @ViewChild(AppSelectComponent) ctrl: AppSelectComponent;
+}
+
+runValueAccessorTests<AppSelectComponent, SelectWrapperComponent>({
+    // <= if host template is used, it should be marked explicitly as a type
+    component: AppSelectComponent, // <= using actual AppSelectComponent as a test target
+    testModuleMetadata: {
+        declarations: [SelectWrapperComponent],
+        imports: [AppSelectModule], // <= importing the module for app-select
+    },
+    hostTemplate: {
+        // specify that "AppSelectComponent" should not be tested directly
+        hostComponent: SelectWrapperComponent,
+        // specify the way to access "AppSelectComponent" from the host template
+        getTestingComponent: (fixture) => fixture.componentInstance.ctrl,
+    },
+    supportsOnBlur: false,
+    internalValueChangeSetter: (fixture, value) => {
+        // "setValue" is a function that is being called
+        // when user selects any "app-select-option"
+        fixture.componentInstance.ctrl.setValue(value, true);
+    },
+    getComponentValue: (fixture) => fixture.componentInstance.ctrl.value,
+    getValues: () => [1, 2, 3], // <= setting the same values as select options in host template
 });
 ```
 
@@ -174,14 +226,16 @@ Wrapper, that hosts testing component. For example, to test `app-select-componen
 @Component({
     selector: 'app-test-component-wrapper',
     template: `
-        <app-select label="Label Value">
-            <app-select-item [value]="1" label="Opt 1"></app-select-item>
-            <app-select-item [value]="2" label="Opt 2"></app-select-item>
-            <app-select-item [value]="3" label="Opt 3"></app-select-item>
+        <app-select label="Label Value" #ctrl>
+            <app-select-option [value]="1" label="Opt 1"></app-select-option>
+            <app-select-option [value]="2" label="Opt 2"></app-select-option>
+            <app-select-option [value]="3" label="Opt 3"></app-select-option>
         </app-select>
     `,
 })
-class TestWrapperComponent {}
+class TestWrapperComponent {
+    @ViewChild('ctrl') ctrl: AppSelectComponent;
+}
 ```
 
 #### getTestingComponent: (fixture: ComponentFixture<H>) => T
@@ -189,4 +243,4 @@ class TestWrapperComponent {}
 Getter for the actual component that is being tested
 
 Using the hostComponent above, the following function should be used:
-`(fixture) => fixture.debugElement.children[0].componentInstance;`
+`(fixture) => fixture.componentInstance.ctrl;`
