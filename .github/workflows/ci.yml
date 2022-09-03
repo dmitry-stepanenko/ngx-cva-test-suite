@@ -1,6 +1,7 @@
 name: on-pull-request
 
 on:
+    pull_request:
     push:
         branches:
             - 'master'
@@ -19,11 +20,11 @@ jobs:
             - name: Install dependencies
               run: npm ci
             - name: Check Formatting
-              run: npm run format:check
-            - name: Integration Test
+              run: git fetch origin master && npm run format:check -- --base=origin/master
+            - name: Integration Test (Jest)
               run: npm run test
-            - name: Test Package
-              run: npm run test-package
+            - name: Integration Test (Karma)
+              run: npx nx run integration:test-karma
             - name: Build App
               run: npm run build -- --prod
             - name: Build Package
