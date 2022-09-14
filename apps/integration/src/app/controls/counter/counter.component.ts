@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, forwardRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 const COUNTER_CONTROL_ACCESSOR = {
@@ -24,6 +24,8 @@ export class CounterControlComponent implements ControlValueAccessor {
     protected onTouched: () => void;
     protected onChange: (value: number) => void;
 
+    constructor(private _cdr: ChangeDetectorRef) {}
+
     up() {
         this.setValue(this.value + 1, true);
     }
@@ -46,6 +48,7 @@ export class CounterControlComponent implements ControlValueAccessor {
 
     writeValue(value: number) {
         this.setValue(value, false);
+        this._cdr.markForCheck();
     }
 
     protected setValue(value: number, emitEvent: boolean) {

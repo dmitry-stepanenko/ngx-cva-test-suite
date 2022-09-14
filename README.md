@@ -31,17 +31,33 @@ See [config](#config) below for the details on each property.
 
 ```typescript
 import { runValueAccessorTests } from `ngx-cva-test-suite`;
+import { ComboboxComponent } from './combobox.component';
 
 runValueAccessorTests({
+    /** Component, that is being tested */
     component: ComboboxComponent,
+    /**
+     * All the metadata required for this test to run.
+     * Under the hood calls TestBed.configureTestingModule with provided config.
+     */
     testModuleMetadata: {
         declarations: [ComboboxComponent],
     },
+    /** Whether component is able to track "onBlur" events separately */
     supportsOnBlur: true,
+    /**
+     * CSS selector for the element, that should dispatch `blur` event.
+     * Required and used only if `supportsOnBlur` is set to true.
+     */
     nativeControlSelector: 'input.combobox-input',
+    /**
+     * Tests the correctness of an approach that is used to set value in the component,
+     * when the change is internal. It's optional and can be omitted by passing "null"
+     */
     internalValueChangeSetter: (fixture, value) => {
         fixture.componentInstance.setValue(value, true);
     },
+    /** Function to get the value of a component in a runtime. */
     getComponentValue: (fixture) => fixture.componentInstance.value,
 });
 ```

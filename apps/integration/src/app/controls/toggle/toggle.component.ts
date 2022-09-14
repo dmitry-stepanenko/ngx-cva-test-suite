@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, forwardRef, Input, Renderer2 } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, Input, Renderer2 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 let UNIQUE_ID = 0;
@@ -39,7 +39,7 @@ export class ToggleComponent implements ControlValueAccessor {
     private onTouched: () => void;
     private onChange: (value: boolean) => void;
 
-    constructor(private _renderer: Renderer2) {}
+    constructor(private _cdr: ChangeDetectorRef) {}
 
     onInput(event: boolean) {
         this.setValue(event, true);
@@ -63,6 +63,7 @@ export class ToggleComponent implements ControlValueAccessor {
 
     writeValue(value: boolean) {
         this.setValue(value, false);
+        this._cdr.markForCheck();
     }
 
     setValue(value: boolean, emitEvent: boolean) {
