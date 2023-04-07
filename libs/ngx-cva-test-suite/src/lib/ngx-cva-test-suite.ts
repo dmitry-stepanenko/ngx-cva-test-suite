@@ -78,19 +78,18 @@ export function runValueAccessorTests<T extends CVAComponentType, H = T>(config:
             });
         }
 
-        beforeEach(fakeAsync(() => {
+        beforeEach(async () => {
             // defining componentInstance after "additionalSetup",
             // because "detectChanges()" should not be called before it
             fixture.detectChanges();
+            await fixture.whenStable();
             componentInstance = config.hostTemplate
                 ? config.hostTemplate.getTestingComponent(fixture)
                 : (fixture.componentInstance as any);
             if (!componentInstance) {
                 throw new Error(`Could not resolve component instance${config.hostTemplate && ' from "hostTemplate"'}`);
             }
-            // attempting to wait for any asynchronous configurations to complete
-            flush();
-        }));
+        });
 
         beforeEach(() => {
             onChangeSpy = testRunnerResolver.createSpy('onChangeSpy');
